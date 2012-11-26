@@ -35,7 +35,7 @@ Create a new database and an user account with the same name and a random passwo
 
 .. code-block:: bash
 
-	mysqldump mk test_database
+	mysqlrocket mk test_database
 
 
 Show all databases
@@ -45,7 +45,7 @@ Show all databases avalaible on your server
 
 .. code-block:: bash
 
-	mysqldump ls
+	mysqlrocket ls
 
 
 Remove a database
@@ -55,7 +55,7 @@ Remove a database and all user account with the same name if they exist
 
 .. code-block:: bash
 
-	mysqldump rm test_database
+	mysqlrocket rm test_database
 
 
 Check mysqlrocket configuration
@@ -65,7 +65,7 @@ Check your mysqlrocket config file and MySQL server connectivity
 
 .. code-block:: bash
 
-	mysqldump st
+	mysqlrocket st
 
 
 
