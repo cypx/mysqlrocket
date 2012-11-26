@@ -1,2 +1,4 @@
 *~
-mysqlrocket/mysqlrocket.pyc
+*.pyc
+dist
+*.egg-info

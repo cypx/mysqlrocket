@@ -14,7 +14,7 @@ import MySQLdb as mysql
 
 __author__ = "Cyprien Devillez"
 __license__ = "GPL"
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 __description__ = """ Simple CLI tool to create and delete easily MySQL databases. """
 
 
@@ -73,6 +73,8 @@ class mysqlrocket:
 				self.config.set(config_id, 'host', self.host)
 				self.config.set(config_id, 'user', self.user)
 				self.config.set(config_id, 'password', self.password)
+				if not os.path.exists(os.path.dirname(self.config_file)):
+					os.makedirs(os.path.dirname(self.config_file))
 				with open(self.config_file, 'wb') as configfile:
 					self.config.write(configfile)
 					print '\nConfiguration file has been saved to: '+os.path.abspath(self.config_file)
