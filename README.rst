@@ -23,6 +23,7 @@ Optional arguments:
 
 See 'mysqlrocket <command> -h' for more information on a specific command.
 
+PyPI package `<http://pypi.python.org/pypi/mysqlrocket>`__ 
 Sources `<https://github.com/cypx/mysqlrocket>`__ 
 
 Examples
