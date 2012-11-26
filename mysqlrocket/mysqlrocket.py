@@ -1,0 +1,237 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys
+import ConfigParser
+import string
+import random
+import datetime
+from appdirs import *
+from argparse import ArgumentParser
+import MySQLdb as mysql
+
+
+
+__author__ = "Cyprien Devillez"
+__license__ = "GPL"
+__version__ = "0.0.1"
+__description__ = """ Simple CLI tool to create and delete easily MySQL databases. """
+
+
+def query_yes_no(question, default="yes"):
+    valid = {"yes":True,   "y":True,  "ye":True,
+             "no":False,     "n":False}
+    if default == None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
+
+    while 1:
+        sys.stdout.write(question + prompt)
+        choice = raw_input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid.keys():
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "\
+                             "(or 'y' or 'n').\n")
+
+
+class mysqlrocket:
+	name = "default"
+	host = ""
+	user = ""
+	password = ""
+	config = ConfigParser.ConfigParser()
+	configfile = ""
+
+	def __init__(self):
+		appname = "mysqlrocket"
+		appauthor = "CypDev"
+		self.config_file= os.path.join(user_data_dir(appname, appauthor), 'mysqlrocket.cfg')
+		self.config.read(self.config_file)
+
+	def load(self, config_id):
+		if (self.config.has_section(config_id)):
+			self.host=self.config.get(config_id, 'host', 0)
+			self.user=self.config.get(config_id, 'user', 0)
+			self.password=self.config.get(config_id, 'password', 0)
+		else:
+			print " Please input host, user, pass. ".center(50, "+")
+			self.host = raw_input("host > ")
+			self.user = raw_input("user > ")
+			self.password = raw_input("pass > ")
+			save_config=query_yes_no(" Do you want to save as default config?")
+			if (save_config):
+				self.config.add_section(config_id)
+				self.config.set(config_id, 'name', self.name)
+				self.config.set(config_id, 'host', self.host)
+				self.config.set(config_id, 'user', self.user)
+				self.config.set(config_id, 'password', self.password)
+				with open(self.config_file, 'wb') as configfile:
+					self.config.write(configfile)
+
+	def mk(self, db_name):
+		db_user=db_name
+		dictionnary=string.ascii_letters+string.digits # alphanumeric, upper and lowercase
+		db_password="".join([random.choice(dictionnary) for i in range(8)])
+		try:
+			# Establish MySQL connection
+			conn = mysql.connect(self.host, self.user, self.password)
+			cursor = conn.cursor()
+
+			# Execute database and user creation queries
+			cursor.execute('CREATE DATABASE {database_name};'.format(database_name=db_name))
+			cursor.execute("GRANT ALL ON {database_name}.* TO {username}@{host} IDENTIFIED BY '{password}'".format(database_name=db_name, username=db_user, host=self.host, password=db_password))
+			cursor.execute('FLUSH PRIVILEGES;')
+
+			# Clean up the connections
+			cursor.close()
+			conn.close()
+
+		except mysql.Error, e:	
+			print "Database creation fail"
+			print('Error %d: %s' % (e.args[0], e.args[1]))
+			sys.exit(1)
+		print '##################################'			
+		print "Database was successfully created!"
+		print '##################################'
+		print "Host: "+self.host
+		print "Database name: "+db_name
+		print "User name: "+db_user
+		print "User password: "+db_password
+		print '##################################'
+
+	def ls(self, db_pattern='%'):
+		try:
+			# Establish MySQL connection
+			conn = mysql.connect(self.host, self.user, self.password)
+			cursor = conn.cursor()
+
+			# Show databases
+			cursor.execute("SHOW DATABASES LIKE '{pattern}';".format(pattern=db_pattern))
+
+			print '##################################'
+			print '#        Database list           #'
+			print '##################################'
+			for database in cursor.fetchall():
+				print '  '+database[0]
+			print '##################################'
+
+			# Clean up the connections
+			cursor.close()
+			conn.close()
+
+		except mysql.Error, e:
+			print('Error %d: %s' % (e.args[0], e.args[1]))
+			sys.exit(1)
+
+
+	def rm(self, db_name):
+		print db_name
+		print 'Database {database_name} will be deleted'.format(database_name=db_name)
+		areyousure=query_yes_no('Are you sure?','no')
+		if areyousure is False:
+			print 'Operation aborted'
+			exit()
+
+		try:
+			# Establish MySQL connection
+			conn = mysql.connect(self.host, self.user, self.password)
+			cursor = conn.cursor()
+
+			# Show databases
+			cursor.execute('DROP DATABASE {database_name};'.format(database_name=db_name))
+			cursor.execute('DROP USER {username}@{host};'.format(username=db_name, host=self.host))
+
+			# Clean up the connections
+			cursor.close()
+			conn.close()
+
+		except mysql.Error, e:
+			print('Error %d: %s' % (e.args[0], e.args[1]))
+			sys.exit(1)
+		print '##################################'			
+		print "Database was successfully deleted!"
+		print '##################################'
+
+	def st(self, st_extended=False):
+		try:
+			# Establish MySQL connection
+			conn = mysql.connect(self.host, self.user, self.password)
+			cursor = conn.cursor()
+
+			print 'MySQL connection was successful!'
+
+			if st_extended:
+				# Show databases
+				cursor.execute('SHOW STATUS;')
+
+				print '##################################'
+				print '#       MySQL Server Status      #'
+				print '##################################'
+				for status in cursor.fetchall():
+					print '  '+status[0]+' = '+status[1]
+				print '##################################'
+
+			# Clean up the connections
+			cursor.close()
+			conn.close()
+
+		except mysql.Error, e:
+			print('Error %d: %s' % (e.args[0], e.args[1]))
+			sys.exit(1)
+		#your code goes here
+
+
+
+def launcher():
+	parser = ArgumentParser(description=__description__,prog="mysqlrocket")
+
+	parser.add_argument("-v", "--version",  action="version",   version="%(prog)s : "+__version__ ,help="Show program version.")
+	parser.add_argument('-u', type=str, default='root', help='mysql user')
+	parser.add_argument('-H', type=str, default='localhost', help='mysql host')
+	parser.add_argument('-p', type=str, default='', help='mysql password')
+
+
+	subparsers = parser.add_subparsers(help='Avalaible commands')
+
+	session=mysqlrocket()
+	session.load('Server1')
+
+	parser_mk = subparsers.add_parser('mk',description='Create a MySQL database', help='Create a MySQL database')
+	parser_mk.add_argument('mk_db_name', metavar='<db_name>', type=str, help='Name of the created database')
+
+	parser_ls = subparsers.add_parser('ls', description='Show databases on MySQL server', help='Show databases on MySQL server')
+	parser_ls.add_argument('ls_db_pattern', metavar='<search_pattern>', type=str, nargs='?', default='%', help='Show only databases name matching pattern')
+
+	parser_rm = subparsers.add_parser('rm',description='Delete a MySQL database', help='Delete a MySQL database')
+	parser_rm.add_argument('rm_db_name', type=str, help='Name of the deleted database')
+
+	parser_st = subparsers.add_parser('st',description='Check your mysqlrocket config file and MySQL server status', help='Check your mysqlrocket config file and MySQL server status')
+	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
+
+	args = parser.parse_args() 
+
+	if hasattr(args,'mk_db_name'): 
+	    session.mk(args.mk_db_name)
+
+	if hasattr(args,'ls_db_pattern'):
+	    session.ls(args.ls_db_pattern)
+
+	if hasattr(args,'rm_db_name'): 
+	    session.rm(args.rm_db_name)
+
+	if hasattr(args,'st_extended'):
+		if args.st_extended=="full":
+			session.st(True)
+		else:
+			session.st(False)
+
+if __name__ == "__main__":
+    launcher()
