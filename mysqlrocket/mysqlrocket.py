@@ -62,11 +62,11 @@ class mysqlrocket:
 			self.user=self.config.get(config_id, 'user', 0)
 			self.password=self.config.get(config_id, 'password', 0)
 		else:
-			print " Please input host, user, pass. ".center(50, "+")
+			print "Please provide MySQL connection informations: host, user, pass. ".center(50, "+")
 			self.host = raw_input("host > ")
 			self.user = raw_input("user > ")
 			self.password = raw_input("pass > ")
-			save_config=query_yes_no(" Do you want to save as default config?")
+			save_config=query_yes_no("Do you want to save configuration?")
 			if (save_config):
 				self.config.add_section(config_id)
 				self.config.set(config_id, 'name', self.name)
@@ -75,6 +75,8 @@ class mysqlrocket:
 				self.config.set(config_id, 'password', self.password)
 				with open(self.config_file, 'wb') as configfile:
 					self.config.write(configfile)
+					print '\nConfiguration file has been saved to: '+os.path.abspath(self.config_file)
+					print 'WARNING: password has been stored in plain text \n'
 
 	def mk(self, db_name):
 		db_user=db_name
