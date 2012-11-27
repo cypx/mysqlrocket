@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 import sys
@@ -138,12 +138,15 @@ class mysqlrocket:
 
 	def rm(self, db_name):
 		print db_name
-		print 'Database {database_name} will be deleted'.format(database_name=db_name)
+		print 'Database "{database_name}" will be deleted'.format(database_name=db_name)
 		areyousure=query_yes_no('Are you sure?','no')
 		if areyousure is False:
 			print 'Operation aborted'
 			exit()
-
+		protected_db=['information_schema', 'mysql', 'information_schema']
+		if any(db_name == db for db in protected_db):
+			print '"'+db_name+'" is a protected database, you should not delete it'
+			exit()
 		try:
 			# Establish MySQL connection
 			conn = mysql.connect(self.host, self.user, self.password)
