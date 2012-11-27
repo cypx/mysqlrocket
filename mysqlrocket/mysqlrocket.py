@@ -14,7 +14,7 @@ import MySQLdb as mysql
 
 __author__ = "Cyprien Devillez"
 __license__ = "GPL"
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __description__ = """ Simple CLI tool to create and delete easily MySQL databases. """
 
 
