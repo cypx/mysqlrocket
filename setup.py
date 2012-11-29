@@ -7,7 +7,7 @@ import mysqlrocket
  
 setup(
     name='mysqlrocket',
-    version='0.0.4',
+    version='0.0.5',
     packages=find_packages(),
     author="Cyprien Devillez",
     author_email="cyp@bidouille.info",
