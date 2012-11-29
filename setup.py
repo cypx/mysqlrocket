@@ -14,7 +14,7 @@ setup(
     description="Simple CLI tool to create, delete and dump easily MySQL databases",
     long_description=open('README.rst').read(),
     include_package_data=True,
-    install_requires==['appdirs','MySQL-python'],
+    install_requires=['appdirs','MySQL-python'],
     url='https://github.com/cypx/mysqlrocket',
     classifiers=[
         "Programming Language :: Python",
