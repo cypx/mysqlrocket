@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__author__ = "Cyprien Devillez"
+__license__ = "GPL"
+__version__ = "0.0.9"
+__description__ = "Simple CLI tool to create and delete easily MySQL databases." 
+
 import sys
 import ConfigParser
 import string
@@ -9,13 +14,6 @@ import datetime
 from appdirs import *
 from argparse import ArgumentParser
 import MySQLdb as mysql
-
-
-
-__author__ = "Cyprien Devillez"
-__license__ = "GPL"
-__version__ = "0.0.5"
-__description__ = """ Simple CLI tool to create and delete easily MySQL databases. """
 
 
 def query_yes_no(question, default="yes"):

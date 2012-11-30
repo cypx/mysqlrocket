@@ -3,15 +3,18 @@
  
 from setuptools import setup, find_packages
  
-import mysqlrocket
+__author__ = "Cyprien Devillez"
+__license__ = "GPL"
+__version__ = "0.0.9"
+__description__ = "Simple CLI tool to create and delete easily MySQL databases."
  
 setup(
     name='mysqlrocket',
-    version='0.0.5',
+    version=__version__,
     packages=find_packages(),
-    author="Cyprien Devillez",
+    author=__author__,
     author_email="cyp@bidouille.info",
-    description="Simple CLI tool to create, delete and dump easily MySQL databases",
+    description=__description__,
     long_description=open('README.rst').read(),
     include_package_data=True,
     install_requires=['appdirs','MySQL-python'],
@@ -32,6 +35,6 @@ setup(
             'mysqlrocket = mysqlrocket.mysqlrocket:launcher',
         ],
     },
-    license="GPL",
+    license=__license__,
  
 ) 
