@@ -3,10 +3,7 @@
  
 from setuptools import setup, find_packages
  
-__author__ = "Cyprien Devillez"
-__license__ = "GPL"
-__version__ = "0.0.9"
-__description__ = "Simple CLI tool to create and delete easily MySQL databases."
+execfile('mysqlrocket/ressources.py')
  
 setup(
     name='mysqlrocket',
