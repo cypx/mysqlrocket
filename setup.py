@@ -14,7 +14,7 @@ setup(
     description=__description__,
     long_description=open('README.rst').read(),
     include_package_data=True,
-    install_requires=['appdirs','MySQL-python'],
+    install_requires=['appdirs','MySQL-python','argparse'],
     url='https://github.com/cypx/mysqlrocket',
     classifiers=[
         "Programming Language :: Python",

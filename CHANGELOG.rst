@@ -6,10 +6,10 @@ MYSQLROCKET
 Changelog 
 #############
 
-0.0.10 (20121202)
+0.0.10 (20121205)
 *******************
 
-* code optimization
+* fix package dependencies
 
 0.0.9 (20121130)
 *******************
