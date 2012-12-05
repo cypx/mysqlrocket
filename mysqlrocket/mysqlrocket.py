@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-execfile('ressources.py')
+import ressources
 
 import sys
 import ConfigParser
@@ -47,7 +47,7 @@ class mysqlrocket:
 
 	def __init__(self):
 		appname = "mysqlrocket"
-		appauthor = "CypDev"
+		appauthor = ressources.__author__
 		self.config_file= os.path.join(user_data_dir(appname, appauthor), 'mysqlrocket.cfg')
 		self.config.read(self.config_file)
 
@@ -193,9 +193,9 @@ class mysqlrocket:
 
 
 def launcher():
-	parser = ArgumentParser(description=__description__,prog="mysqlrocket")
+	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
 
-	parser.add_argument("-v", "--version",  action="version",   version="%(prog)s : "+__version__ ,help="Show program version.")
+	parser.add_argument("-v", "--version",  action="version",   version="%(prog)s : "+ressources.__version__ ,help="Show program version.")
 	parser.add_argument('-u', type=str, default='root', help='mysql user')
 	parser.add_argument('-H', type=str, default='localhost', help='mysql host')
 	parser.add_argument('-p', type=str, default='', help='mysql password')
