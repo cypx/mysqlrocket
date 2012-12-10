@@ -96,7 +96,7 @@ class mysqlrocket:
 					self.config.set(config_id, 'user', input_user)
 				else:
 					self.config.set(config_id, 'user', self.user)
-				self.config.set(config_id, 'password', self.password)
+				self.config.set(config_id, 'password', input_password)
 				if not os.path.exists(os.path.dirname(self.config_file)):
 					os.makedirs(os.path.dirname(self.config_file))
 				with open(self.config_file, 'wb') as configfile:

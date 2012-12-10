@@ -6,6 +6,11 @@ MYSQLROCKET
 Changelog 
 #############
 
+0.0.12 (20121210)
+*******************
+
+* bugfix (password not saved in configuration file)
+
 0.0.11 (20121210)
 *******************
 
