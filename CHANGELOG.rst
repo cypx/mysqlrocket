@@ -9,7 +9,9 @@ Changelog
 0.0.11 (20121210)
 *******************
 
-* display dsn info when create a new database
+* Improve configuration option, custom port can now be used
+* Display DSN info when create a new database
+* Test config file and remove if invalid or outdated
 
 0.0.10 (20121205)
 *******************
@@ -42,7 +44,6 @@ Changelog
 * Improve dependencies resolution
 * Add a CHANGELOG to the package
 
-
 0.0.4 (20121127)
 *************************
 
@@ -52,7 +53,6 @@ Changelog
 *************************
 
 * Update README & documentation
-
 
 0.0.2 (20121126)
 *******************
