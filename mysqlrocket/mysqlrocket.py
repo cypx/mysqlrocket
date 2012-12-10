@@ -104,6 +104,7 @@ class mysqlrocket:
 		print "Database name: "+db_name
 		print "User name: "+db_user
 		print "User password: "+db_password
+		print "DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name
 		print '##################################'
 
 	def ls(self, db_pattern='%'):

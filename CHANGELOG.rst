@@ -6,6 +6,11 @@ MYSQLROCKET
 Changelog 
 #############
 
+0.0.11 (20121210)
+*******************
+
+* display dsn info when create a new database
+
 0.0.10 (20121205)
 *******************
 
