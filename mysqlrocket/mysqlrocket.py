@@ -39,8 +39,9 @@ def query_yes_no(question, default="yes"):
 
 class mysqlrocket:
 	name = "default"
-	host = ""
-	user = ""
+	host = "localhost"
+	user = "root"
+	port = 3306
 	password = ""
 	config = ConfigParser.ConfigParser()
 	configfile = ""
@@ -51,22 +52,50 @@ class mysqlrocket:
 		self.config_file= os.path.join(user_data_dir(appname, appauthor), 'mysqlrocket.cfg')
 		self.config.read(self.config_file)
 
+	def config_remove(self, config_id):
+			remove_config=query_yes_no("Are you sure you want to remove config?")
+			if (remove_config):
+				self.config.remove_section(config_id)
+				with open(self.config_file, 'wb') as configfile:
+					self.config.write(configfile)
+					print '\nConfiguration file has been update: '+os.path.abspath(self.config_file)
+
+
 	def load(self, config_id):
 		if (self.config.has_section(config_id)):
-			self.host=self.config.get(config_id, 'host', 0)
-			self.user=self.config.get(config_id, 'user', 0)
-			self.password=self.config.get(config_id, 'password', 0)
+			try:
+				self.host=self.config.get(config_id, 'host', 0)
+				self.port=int(self.config.get(config_id, 'port', 0))
+				self.user=self.config.get(config_id, 'user', 0)
+				self.password=self.config.get(config_id, 'password', 0)
+			except ConfigParser.NoOptionError:
+				print 'Invalid or outdated config'
+				remove_config=query_yes_no("Do you want to remove invalid config")
+				if (remove_config):
+					self.config_remove(config_id)
+				sys.exit(1)
 		else:
-			print "Please provide MySQL connection informations: host, user, pass. ".center(50, "+")
-			self.host = raw_input("host > ")
-			self.user = raw_input("user > ")
-			self.password = raw_input("pass > ")
+			print "Please provide MySQL connection informations: host, port, user, pass. ".center(50, "+")
+			input_host = raw_input("host ("+self.host+")> ")
+			input_port = raw_input("port ("+str(self.port)+")> ")
+			input_user = raw_input("user ("+self.user+")> ")
+			input_password = raw_input("pass > ")
 			save_config=query_yes_no("Do you want to save configuration?")
 			if (save_config):
 				self.config.add_section(config_id)
 				self.config.set(config_id, 'name', self.name)
-				self.config.set(config_id, 'host', self.host)
-				self.config.set(config_id, 'user', self.user)
+				if input_host:
+					self.config.set(config_id, 'host', input_host) 
+				else:
+					self.config.set(config_id, 'host', self.host)
+				if input_port:
+					self.config.set(config_id, 'port', int(input_port))
+				else:
+					self.config.set(config_id, 'port', self.port)
+				if input_user:
+					self.config.set(config_id, 'user', input_user)
+				else:
+					self.config.set(config_id, 'user', self.user)
 				self.config.set(config_id, 'password', self.password)
 				if not os.path.exists(os.path.dirname(self.config_file)):
 					os.makedirs(os.path.dirname(self.config_file))
@@ -81,7 +110,7 @@ class mysqlrocket:
 		db_password="".join([random.choice(dictionnary) for i in range(8)])
 		try:
 			# Establish MySQL connection
-			conn = mysql.connect(self.host, self.user, self.password)
+			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
 
 			# Execute database and user creation queries
@@ -110,7 +139,7 @@ class mysqlrocket:
 	def ls(self, db_pattern='%'):
 		try:
 			# Establish MySQL connection
-			conn = mysql.connect(self.host, self.user, self.password)
+			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
 
 			# Show databases
@@ -145,7 +174,7 @@ class mysqlrocket:
 			exit()
 		try:
 			# Establish MySQL connection
-			conn = mysql.connect(self.host, self.user, self.password)
+			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
 
 			# Show databases
@@ -166,7 +195,7 @@ class mysqlrocket:
 	def st(self, st_extended=False):
 		try:
 			# Establish MySQL connection
-			conn = mysql.connect(self.host, self.user, self.password)
+			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
 
 			print 'MySQL connection was successful!'
