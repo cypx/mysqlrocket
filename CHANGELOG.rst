@@ -6,6 +6,11 @@ MYSQLROCKET
 Changelog 
 #############
 
+0.0.13 (20130116)
+*******************
+
+* Improve database creation, add argument to override random password generation
+
 0.0.12 (20121210)
 *******************
 
