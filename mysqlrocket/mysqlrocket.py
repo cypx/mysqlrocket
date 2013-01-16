@@ -104,10 +104,11 @@ class mysqlrocket:
 					print '\nConfiguration file has been saved to: '+os.path.abspath(self.config_file)
 					print 'WARNING: password has been stored in plain text \n'
 
-	def mk(self, db_name):
+	def mk(self, db_name, db_password):
 		db_user=db_name
 		dictionnary=string.ascii_letters+string.digits # alphanumeric, upper and lowercase
-		db_password="".join([random.choice(dictionnary) for i in range(8)])
+		if db_password=='':
+			db_password="".join([random.choice(dictionnary) for i in range(8)])
 		try:
 			# Establish MySQL connection
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
@@ -238,6 +239,7 @@ def launcher():
 
 	parser_mk = subparsers.add_parser('mk',description='Create a MySQL database', help='Create a MySQL database')
 	parser_mk.add_argument('mk_db_name', metavar='<db_name>', type=str, help='Name of the created database')
+	parser_mk.add_argument('-f', '--force-password',dest='mk_db_pass', type=str, default='', help='Override random password')
 
 	parser_ls = subparsers.add_parser('ls', description='Show databases on MySQL server', help='Show databases on MySQL server')
 	parser_ls.add_argument('ls_db_pattern', metavar='<search_pattern>', type=str, nargs='?', default='%', help='Show only databases name matching pattern')
@@ -251,7 +253,7 @@ def launcher():
 	args = parser.parse_args() 
 
 	if hasattr(args,'mk_db_name'): 
-	    session.mk(args.mk_db_name)
+	    session.mk(args.mk_db_name,args.mk_db_pass)
 
 	if hasattr(args,'ls_db_pattern'):
 	    session.ls(args.ls_db_pattern)
