@@ -37,7 +37,7 @@ Using pip
 
 .. code-block:: bash
 
-	$ pip install autoenv
+	$ pip install mysqlrocket
 
 Using easy_install
 *********************
