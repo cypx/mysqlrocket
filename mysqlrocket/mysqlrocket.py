@@ -43,6 +43,7 @@ class mysqlrocket:
 	user = "root"
 	port = 3306
 	password = ""
+	mysqldump = "/usr/bin/mysqldump"
 	config = ConfigParser.ConfigParser()
 	configfile = ""
 
@@ -110,16 +111,11 @@ class mysqlrocket:
 		if db_password=='':
 			db_password="".join([random.choice(dictionnary) for i in range(8)])
 		try:
-			# Establish MySQL connection
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
-
-			# Execute database and user creation queries
 			cursor.execute('CREATE DATABASE {database_name};'.format(database_name=db_name))
 			cursor.execute("GRANT ALL ON {database_name}.* TO {username}@{host} IDENTIFIED BY '{password}'".format(database_name=db_name, username=db_user, host=self.host, password=db_password))
 			cursor.execute('FLUSH PRIVILEGES;')
-
-			# Clean up the connections
 			cursor.close()
 			conn.close()
 
@@ -139,21 +135,15 @@ class mysqlrocket:
 
 	def ls(self, db_pattern='%'):
 		try:
-			# Establish MySQL connection
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
-
-			# Show databases
 			cursor.execute("SHOW DATABASES LIKE '{pattern}';".format(pattern=db_pattern))
-
 			print '##################################'
 			print '#        Database list           #'
 			print '##################################'
 			for database in cursor.fetchall():
 				print '  '+database[0]
 			print '##################################'
-
-			# Clean up the connections
 			cursor.close()
 			conn.close()
 
@@ -174,15 +164,10 @@ class mysqlrocket:
 			print '"'+db_name+'" is a protected database, you should not delete it'
 			exit()
 		try:
-			# Establish MySQL connection
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
-
-			# Show databases
 			cursor.execute('DROP DATABASE {database_name};'.format(database_name=db_name))
 			cursor.execute('DROP USER {username}@{host};'.format(username=db_name, host=self.host))
-
-			# Clean up the connections
 			cursor.close()
 			conn.close()
 
@@ -195,31 +180,24 @@ class mysqlrocket:
 
 	def st(self, st_extended=False):
 		try:
-			# Establish MySQL connection
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
-
 			print 'MySQL connection was successful!'
-
 			if st_extended:
-				# Show databases
 				cursor.execute('SHOW STATUS;')
-
 				print '##################################'
 				print '#       MySQL Server Status      #'
 				print '##################################'
 				for status in cursor.fetchall():
 					print '  '+status[0]+' = '+status[1]
 				print '##################################'
-
-			# Clean up the connections
 			cursor.close()
 			conn.close()
 
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-		#your code goes here
+
 
 
 
@@ -247,6 +225,9 @@ def launcher():
 	parser_rm = subparsers.add_parser('rm',description='Delete a MySQL database', help='Delete a MySQL database')
 	parser_rm.add_argument('rm_db_name', type=str, help='Name of the deleted database')
 
+	parser_dp = subparsers.add_parser('dp',description='Dump a MySQL database', help='Dump a MySQL database')
+	parser_dp.add_argument('dp_db_name', type=str, help='Name of the dumped database')
+
 	parser_st = subparsers.add_parser('st',description='Check your mysqlrocket config file and MySQL server status', help='Check your mysqlrocket config file and MySQL server status')
 	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
 
@@ -260,6 +241,9 @@ def launcher():
 
 	if hasattr(args,'rm_db_name'): 
 	    session.rm(args.rm_db_name)
+
+	if hasattr(args,'dp_db_name'): 
+	    session.rm(args.dp_db_name)
 
 	if hasattr(args,'st_extended'):
 		if args.st_extended=="full":
