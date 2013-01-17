@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import ressources
-
 import sys
 import ConfigParser
 import string
 import random
 import datetime
+import subprocess
 from appdirs import *
 from argparse import ArgumentParser
 import MySQLdb as mysql
@@ -69,6 +69,7 @@ class mysqlrocket:
 				self.port=int(self.config.get(config_id, 'port', 0))
 				self.user=self.config.get(config_id, 'user', 0)
 				self.password=self.config.get(config_id, 'password', 0)
+				self.mysqldump=self.config.get(config_id, 'mysqldump', 0)
 			except ConfigParser.NoOptionError:
 				print 'Invalid or outdated config'
 				remove_config=query_yes_no("Do you want to remove invalid config")
@@ -81,6 +82,7 @@ class mysqlrocket:
 			input_port = raw_input("port ("+str(self.port)+")> ")
 			input_user = raw_input("user ("+self.user+")> ")
 			input_password = raw_input("pass > ")
+			input_mysqldump = raw_input("mysqldump absolute path ("+self.mysqldump+")> ")
 			save_config=query_yes_no("Do you want to save configuration?")
 			if (save_config):
 				self.config.add_section(config_id)
@@ -98,6 +100,10 @@ class mysqlrocket:
 				else:
 					self.config.set(config_id, 'user', self.user)
 				self.config.set(config_id, 'password', input_password)
+				if input_mysqldump:
+					self.config.set(config_id, 'mysqldump', input_mysqldump)
+				else:
+					self.config.set(config_id, 'mysqldump', self.mysqldump)
 				if not os.path.exists(os.path.dirname(self.config_file)):
 					os.makedirs(os.path.dirname(self.config_file))
 				with open(self.config_file, 'wb') as configfile:
@@ -178,6 +184,25 @@ class mysqlrocket:
 		print "Database was successfully deleted!"
 		print '##################################'
 
+	def dp(self, db_name):
+		datenow= datetime.datetime.now()
+		filename = db_name + "-" +datenow.strftime("%Y_%m_%d-%H_%M_%S") + ".gz"
+		try:
+			if self.password == "":
+				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --max_allowed_packet=512M -c %s" % (self.user, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+			else:
+				p1 = subprocess.Popen("mysqldump -u %s -p%s -h %s -e --opt --max_allowed_packet=512M -c %s" % (self.user, self.password, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+			p2 = subprocess.Popen("gzip -c > %s" % (filename), stdin=p1.stdout, shell=True)
+			p1.stdout.close()
+			output = p1.stderr.read()
+			if output == '':
+				print "The database has been dump to: "+filename
+			else:
+				log(output)
+				exit(1)
+		except subprocess.CalledProcessError as e:
+			print "Error: process exited with status %s" % e.returncode
+
 	def st(self, st_extended=False):
 		try:
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
@@ -243,7 +268,7 @@ def launcher():
 	    session.rm(args.rm_db_name)
 
 	if hasattr(args,'dp_db_name'): 
-	    session.rm(args.dp_db_name)
+	    session.dp(args.dp_db_name)
 
 	if hasattr(args,'st_extended'):
 		if args.st_extended=="full":
