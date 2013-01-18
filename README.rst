@@ -4,14 +4,16 @@ MYSQLROCKET  - Simple & fast MySQL manage tool
 
 **MysqlRocket** is a Simple CLI tool to create and delete easily MySQL databases.
 
-usage: mysqlrocket [-h] [-v] [-u U] [-H H] [-p P] {mk,ls,rm,st} ...
+usage: mysqlrocket [-h] [-v] [-u U] [-H H] [-p P] {bk,dp,mk,ls,rm,st} ...
 
 mysqlrocket commands are:
 
-* **mk**         Create a MySQL database
-* **ls**         Show databases on MySQL server
-* **rm**         Delete a MySQL database
-* **status**     Check your mysqlrocket config and MySQL server connectivity
+* **bk**        Backup all databases on MySQL server
+* **dp**        Dump and gzip a MySQL database
+* **mk**        Create a MySQL database with an dedicated user and a random password
+* **ls**        Show databases on MySQL server
+* **rm**        Delete a MySQL database
+* **st**     	Check your mysqlrocket config and MySQL server connectivity
 
 Optional arguments:
 
@@ -66,7 +68,31 @@ Create a new database whith an associated user account using the same name and a
 
 .. code-block:: bash
 
-	$ mysqlrocket mk test_database
+	$ mysqlrocket mk new_database
+
+Create a new database whith an associated user account using the same name and force password
+
+.. code-block:: bash
+
+	$ mysqlrocket mk new_database -f new_password
+
+Backup databases
+*************************
+
+Dump all databases avalaible on your server to the current directory
+
+.. code-block:: bash
+
+	$ mysqlrocket bk
+
+Dump database
+*************************
+
+Dump a databases to the current directory
+
+.. code-block:: bash
+
+	$ mysqlrocket dp
 
 
 Show all databases

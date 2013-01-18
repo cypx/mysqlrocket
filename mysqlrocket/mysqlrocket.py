@@ -190,16 +190,16 @@ class MySQLRocket:
 		filename = db_name + "-" +datenow.strftime("%Y_%m_%d-%H_%M_%S") + ".gz"
 		try:
 			if self.password == "":
-				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --max_allowed_packet=512M -c %s" % (self.user, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			else:
-				p1 = subprocess.Popen("mysqldump -u %s -p%s -h %s -e --opt --max_allowed_packet=512M -c %s" % (self.user, self.password, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+				p1 = subprocess.Popen("mysqldump -u %s -p%s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.password, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			p2 = subprocess.Popen("gzip -c > %s" % (filename), stdin=p1.stdout, shell=True)
 			p1.stdout.close()
 			output = p1.stderr.read()
 			if output == '':
 				print "The database has been dump to: "+filename
 			else:
-				log(output)
+				print output
 				exit(1)
 		except subprocess.CalledProcessError as e:
 			print "Error: process exited with status %s" % e.returncode
@@ -223,7 +223,6 @@ class MySQLRocket:
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-
 
 def launcher():
 	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
@@ -252,6 +251,9 @@ def launcher():
 	parser_dp = subparsers.add_parser('dp',description='Dump a MySQL database', help='Dump a MySQL database')
 	parser_dp.add_argument('dp_db_name', type=str, help='Name of the dumped database')
 
+	parser_bk = subparsers.add_parser('bk', description='Backup all databases on MySQL server', help='Backup all databases on MySQL server')
+	parser_bk.add_argument('bk_db_pattern', metavar='<backup_pattern>', type=str, nargs='?', default='%', help='Dump only databases name matching pattern')
+
 	parser_st = subparsers.add_parser('st',description='Check your mysqlrocket config file and MySQL server status', help='Check your mysqlrocket config file and MySQL server status')
 	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
 
@@ -268,6 +270,11 @@ def launcher():
 
 	if hasattr(args,'dp_db_name'): 
 	    session.dp(args.dp_db_name)
+
+	if hasattr(args,'bk_db_pattern'):
+		db_list=session.showdb(args.bk_db_pattern)
+		for database in db_list:
+	 		session.dp(database)
 
 	if hasattr(args,'st_extended'):
 		if args.st_extended=="full":
