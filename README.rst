@@ -68,13 +68,13 @@ Create a new database whith an associated user account using the same name and a
 
 .. code-block:: bash
 
-	$ mysqlrocket mk new_database
+	$ mysqlrocket mk DATABASE_NAME
 
 Create a new database whith an associated user account using the same name and force password
 
 .. code-block:: bash
 
-	$ mysqlrocket mk new_database -f new_password
+	$ mysqlrocket mk DATABASE_NAME -f DATABASE_PASSWORD
 
 Backup databases
 *************************
@@ -92,7 +92,7 @@ Dump a databases to the current directory
 
 .. code-block:: bash
 
-	$ mysqlrocket dp
+	$ mysqlrocket dp DATABASE_NAME
 
 
 Show all databases
@@ -112,7 +112,7 @@ Remove a database and all user account with the same name if they exist
 
 .. code-block:: bash
 
-	$ mysqlrocket rm test_database
+	$ mysqlrocket rm DATABASE_NAME
 
 
 Check mysqlrocket configuration
