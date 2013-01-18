@@ -24,7 +24,6 @@ def query_yes_no(question, default="yes"):
         prompt = " [y/N] "
     else:
         raise ValueError("invalid default answer: '%s'" % default)
-
     while 1:
         sys.stdout.write(question + prompt)
         choice = raw_input().lower()
@@ -37,7 +36,7 @@ def query_yes_no(question, default="yes"):
                              "(or 'y' or 'n').\n")
 
 
-class mysqlrocket:
+class MySQLRocket:
 	name = "default"
 	host = "localhost"
 	user = "root"
@@ -60,7 +59,6 @@ class mysqlrocket:
 				with open(self.config_file, 'wb') as configfile:
 					self.config.write(configfile)
 					print '\nConfiguration file has been update: '+os.path.abspath(self.config_file)
-
 
 	def load(self, config_id):
 		if (self.config.has_section(config_id)):
@@ -124,7 +122,6 @@ class mysqlrocket:
 			cursor.execute('FLUSH PRIVILEGES;')
 			cursor.close()
 			conn.close()
-
 		except mysql.Error, e:	
 			print "Database creation fail"
 			print('Error %d: %s' % (e.args[0], e.args[1]))
@@ -140,23 +137,28 @@ class mysqlrocket:
 		print '##################################'
 
 	def ls(self, db_pattern='%'):
+		db_list=self.showdb(db_pattern)
+		print '##################################'
+		print '#        Database list           #'
+		print '##################################'
+		for database in db_list:
+			print '  '+database
+		print '##################################'		
+
+	def showdb(self, db_pattern='%'):
+		db_list=[]
 		try:
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
 			cursor = conn.cursor()
 			cursor.execute("SHOW DATABASES LIKE '{pattern}';".format(pattern=db_pattern))
-			print '##################################'
-			print '#        Database list           #'
-			print '##################################'
 			for database in cursor.fetchall():
-				print '  '+database[0]
-			print '##################################'
+				db_list.append(database[0])
 			cursor.close()
 			conn.close()
-
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-
+		return db_list
 
 	def rm(self, db_name):
 		print db_name
@@ -176,7 +178,6 @@ class mysqlrocket:
 			cursor.execute('DROP USER {username}@{host};'.format(username=db_name, host=self.host))
 			cursor.close()
 			conn.close()
-
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
@@ -224,8 +225,6 @@ class mysqlrocket:
 			sys.exit(1)
 
 
-
-
 def launcher():
 	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
 
@@ -237,7 +236,7 @@ def launcher():
 
 	subparsers = parser.add_subparsers(help='Avalaible commands')
 
-	session=mysqlrocket()
+	session=MySQLRocket()
 	session.load('Server1')
 
 	parser_mk = subparsers.add_parser('mk',description='Create a MySQL database', help='Create a MySQL database')
