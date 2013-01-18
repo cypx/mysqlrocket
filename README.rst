@@ -58,8 +58,8 @@ But on some, prerequisites are required, for example, on Debian 6
 
 (mysqldb could not be installed by easy_install cause of some system dependencies)
 
-Installation
-##############
+Upgrade
+##########
 
 Using pip
 **************
