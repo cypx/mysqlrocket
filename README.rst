@@ -58,6 +58,23 @@ But on some, prerequisites are required, for example, on Debian 6
 
 (mysqldb could not be installed by easy_install cause of some system dependencies)
 
+Installation
+##############
+
+Using pip
+**************
+
+.. code-block:: bash
+
+	$ pip install --upgrade mysqlrocket
+
+Using easy_install
+*********************
+
+.. code-block:: bash
+
+	$ easy_install --upgrade mysqlrocket
+
 Examples
 ##########
 
