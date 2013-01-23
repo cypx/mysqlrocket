@@ -228,10 +228,10 @@ def launcher():
 	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
 
 	parser.add_argument("-v", "--version",  action="version",   version="%(prog)s : "+ressources.__version__ ,help="Show program version.")
-	parser.add_argument('-u', type=str, default='root', help='mysql user')
-	parser.add_argument('-H', type=str, default='localhost', help='mysql host')
-	parser.add_argument('-p', type=str, default='', help='mysql password')
-
+	parser.add_argument('-u', dest='mysql_user', metavar='<mysql_user>', type=str, default='root', help='mysql user')
+	parser.add_argument('-H', dest='mysql_host', metavar='<mysql_host>', type=str, default='localhost', help='mysql host')
+	parser.add_argument('-p', dest='mysql_password', metavar='<mysql_password>', type=str, default='', help='mysql password')
+	parser.add_argument('-P', dest='mysql_port', metavar='<mysql_user>', type=int, default=3306, help='mysql port')
 
 	subparsers = parser.add_subparsers(help='Avalaible commands')
 
@@ -240,16 +240,16 @@ def launcher():
 
 	parser_mk = subparsers.add_parser('mk',description='Create a MySQL database', help='Create a MySQL database')
 	parser_mk.add_argument('mk_db_name', metavar='<db_name>', type=str, help='Name of the created database')
-	parser_mk.add_argument('-f', '--force-password',dest='mk_db_pass', type=str, default='', help='Override random password generation')
+	parser_mk.add_argument('-f', '--force-password',dest='mk_db_pass', metavar='<new_user_password>', type=str, default='', help='Override random password generation')
 
 	parser_ls = subparsers.add_parser('ls', description='Show databases on MySQL server', help='Show databases on MySQL server')
 	parser_ls.add_argument('ls_db_pattern', metavar='<search_pattern>', type=str, nargs='?', default='%', help='Show only databases name matching pattern')
 
 	parser_rm = subparsers.add_parser('rm',description='Delete a MySQL database', help='Delete a MySQL database')
-	parser_rm.add_argument('rm_db_name', type=str, help='Name of the deleted database')
+	parser_rm.add_argument('rm_db_name', metavar='<db_name>', type=str, help='Name of the deleted database')
 
 	parser_dp = subparsers.add_parser('dp',description='Dump a MySQL database', help='Dump a MySQL database')
-	parser_dp.add_argument('dp_db_name', type=str, help='Name of the dumped database')
+	parser_dp.add_argument('dp_db_name', metavar='<db_name>', type=str, help='Name of the dumped database')
 
 	parser_bk = subparsers.add_parser('bk', description='Backup all databases on MySQL server', help='Backup all databases on MySQL server')
 	parser_bk.add_argument('bk_db_pattern', metavar='<backup_pattern>', type=str, nargs='?', default='%', help='Dump only databases name matching pattern')
@@ -258,6 +258,18 @@ def launcher():
 	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
 
 	args = parser.parse_args() 
+
+	if hasattr(args,'mysql_user'): 
+		session.user = args.mysql_user
+
+	if hasattr(args,'mysql_host'): 
+		session.host = args.mysql_host
+
+	if hasattr(args,'mysql_password'): 
+		session.password = args.mysql_password
+
+	if hasattr(args,'mysql_port'): 
+		session.port = args.mysql_port
 
 	if hasattr(args,'mk_db_name'): 
 	    session.mk(args.mk_db_name,args.mk_db_pass)
