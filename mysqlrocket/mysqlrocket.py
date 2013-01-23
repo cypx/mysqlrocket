@@ -141,6 +141,7 @@ class MySQLRocket:
 		print '##################################'
 		print '#        Database list           #'
 		print '##################################'
+		db_list.sort()
 		for database in db_list:
 			print '  '+database
 		print '##################################'		

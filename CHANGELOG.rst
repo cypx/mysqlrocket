@@ -10,6 +10,7 @@ Changelog
 *******************
 
 * Fix optionnal arguments
+* List command now sorting database by name
 
 
 0.0.14 (20130118)
