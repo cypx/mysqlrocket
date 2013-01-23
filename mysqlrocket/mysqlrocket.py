@@ -229,10 +229,10 @@ def launcher():
 	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
 
 	parser.add_argument("-v", "--version",  action="version",   version="%(prog)s : "+ressources.__version__ ,help="Show program version.")
-	parser.add_argument('-u', dest='mysql_user', metavar='<mysql_user>', type=str, default='root', help='mysql user')
-	parser.add_argument('-H', dest='mysql_host', metavar='<mysql_host>', type=str, default='localhost', help='mysql host')
-	parser.add_argument('-p', dest='mysql_password', metavar='<mysql_password>', type=str, default='', help='mysql password')
-	parser.add_argument('-P', dest='mysql_port', metavar='<mysql_user>', type=int, default=3306, help='mysql port')
+	parser.add_argument('-u', dest='mysql_user', metavar='<mysql_user>', type=str, help='mysql user')
+	parser.add_argument('-H', dest='mysql_host', metavar='<mysql_host>', type=str, help='mysql host')
+	parser.add_argument('-p', dest='mysql_password', metavar='<mysql_password>', type=str, help='mysql password')
+	parser.add_argument('-P', dest='mysql_port', metavar='<mysql_user>', type=int, help='mysql port')
 
 	subparsers = parser.add_subparsers(help='Avalaible commands')
 
@@ -260,17 +260,13 @@ def launcher():
 
 	args = parser.parse_args() 
 
-	if hasattr(args,'mysql_user'): 
-		session.user = args.mysql_user
+	if args.mysql_user is not None: session.user = args.mysql_user
 
-	if hasattr(args,'mysql_host'): 
-		session.host = args.mysql_host
+	if args.mysql_host is not None: session.host = args.mysql_host
 
-	if hasattr(args,'mysql_password'): 
-		session.password = args.mysql_password
+	if args.mysql_password is not None: session.password = args.mysql_password
 
-	if hasattr(args,'mysql_port'): 
-		session.port = args.mysql_port
+	if args.mysql_port is not None: session.port = args.mysql_port
 
 	if hasattr(args,'mk_db_name'): 
 	    session.mk(args.mk_db_name,args.mk_db_pass)
