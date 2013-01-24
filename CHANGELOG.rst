@@ -6,12 +6,13 @@ MYSQLROCKET
 Changelog 
 #############
 
-0.0.15 (201301??)
+0.0.15 (20130124)
 *******************
 
 * Fix optionnal arguments
 * List command now sorting database by name
-
+* List command return more information (tables number, size...)
+* Prevent use of an existing database when make a new one
 
 0.0.14 (20130118)
 *******************
