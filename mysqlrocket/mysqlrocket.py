@@ -35,6 +35,10 @@ def query_yes_no(question, default="yes"):
             sys.stdout.write("Please respond with 'yes' or 'no' "\
                              "(or 'y' or 'n').\n")
 
+class MySQLRocketDB
+	name = ""
+	size = ""
+	table_number = ""
 
 class MySQLRocket:
 	name = "default"
