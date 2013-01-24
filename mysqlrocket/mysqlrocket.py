@@ -115,6 +115,11 @@ class MySQLRocket:
 					print 'WARNING: password has been stored in plain text \n'
 
 	def mk(self, db_name, db_password):
+		db_list=self.showdb('%')
+		for database in db_list:
+			if database==db_name:
+				print 'Error database already exist!'
+				sys.exit(1)
 		db_user=db_name
 		dictionnary=string.ascii_letters+string.digits # alphanumeric, upper and lowercase
 		if db_password=='':
