@@ -35,10 +35,11 @@ def query_yes_no(question, default="yes"):
             sys.stdout.write("Please respond with 'yes' or 'no' "\
                              "(or 'y' or 'n').\n")
 
-class MySQLRocketDB
+class MySQLRocketDB:
 	name = ""
 	size = ""
-	table_number = ""
+	tables_number = ""
+	rows_number = ""
 
 class MySQLRocket:
 	name = "default"
@@ -142,13 +143,14 @@ class MySQLRocket:
 
 	def ls(self, db_pattern='%'):
 		db_list=self.showdb(db_pattern)
-		print '##################################'
-		print '#        Database list           #'
-		print '##################################'
+		print "-"*80
+		print '| {0:28}| {1:16}| {2:15}| {3:12}|'.format("Database", "Tables number", "Rows number", "Size (MB)")
+		print "-"*80
 		db_list.sort()
 		for database in db_list:
-			print '  '+database
-		print '##################################'		
+			db=self.get_db_properties(database)
+			print '| {0:28}| {1:16}| {2:15}| {3:12}|'.format(db.name[:20], db.tables_number [:20], db.rows_number[:8], db.size[:30])
+		print "-"*80	
 
 	def showdb(self, db_pattern='%'):
 		db_list=[]
@@ -228,6 +230,28 @@ class MySQLRocket:
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
+
+	def get_db_properties(self, db_name):
+		db=MySQLRocketDB()
+		db.name=db_name
+		try:
+			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
+			cursor = conn.cursor()
+			cursor.execute('SELECT count(*) FROM information_schema.tables WHERE TABLE_SCHEMA="{database_name}";'.format(database_name=db.name))
+			result=cursor.fetchone()
+			db.tables_number=str(result[0])
+			cursor.execute('SELECT SUM(TABLE_ROWS) FROM information_schema.tables WHERE TABLE_SCHEMA="{database_name}";'.format(database_name=db.name))
+			result=cursor.fetchone()
+			db.rows_number=str(result[0])
+			cursor.execute('SELECT ROUND(SUM( data_length + index_length ) / 1024 / 1024, 3) FROM information_schema.tables WHERE TABLE_SCHEMA="{database_name}";'.format(database_name=db.name))
+			result=cursor.fetchone()
+			db.size=str(result[0])
+			cursor.close()
+			conn.close()
+		except mysql.Error, e:	
+			print('Error %d: %s' % (e.args[0], e.args[1]))
+			sys.exit(1)
+		return db
 
 def launcher():
 	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
