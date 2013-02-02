@@ -36,25 +36,25 @@ def query_yes_no(question, default="yes"):
                              "(or 'y' or 'n').\n")
 
 class MySQLRocketDB:
-	name = ""
-	size = ""
-	tables_number = ""
-	rows_number = ""
+	def __init__(self):
+		self.name = ""
+		self.size = ""
+		self.tables_number = ""
+		self.rows_number = ""
 
 class MySQLRocket:
-	name = "default"
-	host = "localhost"
-	user = "root"
-	port = 3306
-	password = ""
-	mysqldump = "/usr/bin/mysqldump"
-	config = ConfigParser.ConfigParser()
-	configfile = ""
+	appname = "mysqlrocket"
+	appauthor = ressources.__author__
 
 	def __init__(self):
-		appname = "mysqlrocket"
-		appauthor = ressources.__author__
-		self.config_file= os.path.join(user_data_dir(appname, appauthor), 'mysqlrocket.cfg')
+		self.name = "default"
+		self.host = "localhost"
+		self.user = "root"
+		self.port = 3306
+		self.password = ""
+		self.mysqldump = "/usr/bin/mysqldump"
+		self.config = ConfigParser.ConfigParser()
+		self.config_file= os.path.join(user_data_dir(self.appname, self.appauthor), 'mysqlrocket.cfg')
 		self.config.read(self.config_file)
 
 	def config_remove(self, config_id):
@@ -136,15 +136,15 @@ class MySQLRocket:
 			print "Database creation fail"
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-		print '##################################'			
-		print "Database was successfully created!"
-		print '##################################'
-		print "Host: "+self.host
-		print "Database name: "+db_name
-		print "User name: "+db_user
-		print "User password: "+db_password
-		print "DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name
-		print '##################################'
+		print "-"*50		
+		print "| {0:46} |".format("Database was successfully created!")
+		print "-"*50
+		print "| {0:46} |".format("Host: "+self.host)
+		print "| {0:46} |".format("Database name: "+db_name)
+		print "| {0:46} |".format("User name: "+db_user)
+		print "| {0:46} |".format("User password: "+db_password)
+		print "| {0:46} |".format("DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name)
+		print "-"*50
 
 	def ls(self, db_pattern='%'):
 		db_list=self.showdb(db_pattern)
@@ -173,7 +173,6 @@ class MySQLRocket:
 		return db_list
 
 	def rm(self, db_name):
-		print db_name
 		print 'Database "{database_name}" will be deleted'.format(database_name=db_name)
 		areyousure=query_yes_no('Are you sure?','no')
 		if areyousure is False:
@@ -193,9 +192,9 @@ class MySQLRocket:
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-		print '##################################'			
-		print "Database was successfully deleted!"
-		print '##################################'
+		print "-"*50		
+		print "| {0:46} |".format("Database was successfully deleted!")
+		print "-"*50
 
 	def dp(self, db_name):
 		datenow= datetime.datetime.now()
@@ -223,12 +222,12 @@ class MySQLRocket:
 			print 'MySQL connection was successful!'
 			if st_extended:
 				cursor.execute('SHOW STATUS;')
-				print '##################################'
-				print '#       MySQL Server Status      #'
-				print '##################################'
+				print "-"*50		
+				print "| {0:46} |".format("MySQL Server Status")
+				print "-"*50
 				for status in cursor.fetchall():
 					print '  '+status[0]+' = '+status[1]
-				print '##################################'
+				print "-"*50
 			cursor.close()
 			conn.close()
 
