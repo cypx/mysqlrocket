@@ -35,14 +35,14 @@ def query_yes_no(question, default="yes"):
             sys.stdout.write("Please respond with 'yes' or 'no' "\
                              "(or 'y' or 'n').\n")
 
-class MySQLRocketDB:
+class MySQLRocketDB(object):
 	def __init__(self):
 		self.name = ""
 		self.size = ""
 		self.tables_number = ""
 		self.rows_number = ""
 
-class MySQLRocket:
+class MySQLRocket(object):
 	appname = "mysqlrocket"
 	appauthor = ressources.__author__
 
@@ -121,6 +121,9 @@ class MySQLRocket:
 				print 'Error database already exist!'
 				sys.exit(1)
 		db_user=db_name
+		if len(db_user)>16:
+			print 'ERROR user name (same as datatabase name) cannot exceed 16 characters (MySQL restriction)'
+			sys.exit(1)
 		dictionnary=string.ascii_letters+string.digits # alphanumeric, upper and lowercase
 		if db_password=='':
 			db_password="".join([random.choice(dictionnary) for i in range(8)])
