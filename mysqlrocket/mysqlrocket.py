@@ -149,16 +149,27 @@ class MySQLRocket(object):
 		print "| {0:46} |".format("DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name)
 		print "-"*50
 
-	def ls(self, db_pattern='%'):
+	def ls(self, db_pattern='%', db_extend=False):
 		db_list=self.showdb(db_pattern)
-		print "-"*80
-		print '| {0:28}| {1:16}| {2:15}| {3:12}|'.format("Database", "Tables number", "Rows number", "Size (MB)")
-		print "-"*80
 		db_list.sort()
+		if db_extend:
+			print "-"*80
+			print '| {0:28}| {1:16}| {2:15}| {3:12}|'.format("Database", "Tables number", "Rows number", "Size (MB)")
+			print "-"*80
+		else:
+			print "-"*31
+			print '| {0:28}|'.format("Database")
+			print "-"*31
 		for database in db_list:
-			db=self.get_db_properties(database)
-			print '| {0:28}| {1:16}| {2:15}| {3:12}|'.format(db.name[:20], db.tables_number [:20], db.rows_number[:8], db.size[:30])
-		print "-"*80	
+			if db_extend:
+				db=self.get_db_properties(database)
+				print '| {0:28}| {1:16}| {2:15}| {3:12}|'.format(db.name[:20], db.tables_number [:20], db.rows_number[:8], db.size[:30])
+			else:
+				print '| {0:28}|'.format(database[:20])
+		if db_extend:
+			print "-"*80
+		else:
+			print "-"*31
 
 	def showdb(self, db_pattern='%'):
 		db_list=[]
@@ -279,6 +290,7 @@ def launcher():
 	parser_mk.add_argument('-f', '--force-password',dest='mk_db_pass', metavar='<new_user_password>', type=str, default='', help='Override random password generation')
 
 	parser_ls = subparsers.add_parser('ls', description='Show databases on MySQL server', help='Show databases on MySQL server')
+	parser_ls.add_argument('-a', '--all', action='store_true', dest='ls_db_extend', help='Show detailed information for each database')
 	parser_ls.add_argument('ls_db_pattern', metavar='<search_pattern>', type=str, nargs='?', default='%', help='Show only databases name matching pattern')
 
 	parser_rm = subparsers.add_parser('rm',description='Delete a MySQL database', help='Delete a MySQL database')
@@ -307,7 +319,7 @@ def launcher():
 	    session.mk(args.mk_db_name,args.mk_db_pass)
 
 	if hasattr(args,'ls_db_pattern'):
-	    session.ls(args.ls_db_pattern)
+	    session.ls('%'+args.ls_db_pattern+'%',args.ls_db_extend)
 
 	if hasattr(args,'rm_db_name'): 
 	    session.rm(args.rm_db_name)
