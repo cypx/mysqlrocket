@@ -272,7 +272,7 @@ class MySQLRocket(object):
 		return db
 
 def launcher():
-	parser = ArgumentParser(description=ressources.__description__,prog="mysqlrocket")
+	parser = ArgumentParser(description=ressources.__description__,prog=__app_name__)
 
 	parser.add_argument("-v", "--version",  action="version",   version="%(prog)s : "+ressources.__version__ ,help="Show program version.")
 	parser.add_argument('-u', dest='mysql_user', metavar='<mysql_user>', type=str, help='mysql user')

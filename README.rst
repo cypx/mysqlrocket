@@ -66,7 +66,7 @@ Using pip
 
 .. code-block:: bash
 
-	$ pip install --upgrade mysqlrocket
+	$ pip --upgrade mysqlrocket
 
 Using easy_install
 *********************
@@ -121,6 +121,11 @@ Show all databases avalaible on your server
 
 	$ mysqlrocket ls
 
+Show all databases avalaible on your server and some information (tables number, size...)
+
+.. code-block:: bash
+
+	$ mysqlrocket ls -a
 
 Remove a database
 *************************

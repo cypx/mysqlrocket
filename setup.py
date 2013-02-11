@@ -6,11 +6,11 @@ from setuptools import setup, find_packages
 execfile('mysqlrocket/ressources.py')
  
 setup(
-    name='mysqlrocket',
+    name=__app_name__,
     version=__version__,
     packages=find_packages(),
     author=__author__,
-    author_email="cyp@bidouille.info",
+    author_email=__author_email__,
     description=__description__,
     long_description=open('README.rst').read(),
     include_package_data=True,

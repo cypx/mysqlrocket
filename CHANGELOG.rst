@@ -6,6 +6,13 @@ MYSQLROCKET
 Changelog 
 #############
 
+0.0.16 (20130211)
+*******************
+
+* List command do not show extended information by default (too slow)
+* List command has a new argument (-a) for showing extended information 
+* Code and output improvements
+
 0.0.15 (20130124)
 *******************
 
