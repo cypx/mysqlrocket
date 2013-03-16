@@ -4,6 +4,8 @@ MYSQLROCKET  - Simple & fast MySQL manage tool
 
 **MysqlRocket** is a Simple CLI tool to create and delete easily MySQL databases.
 
+|flattr|_
+
 usage: mysqlrocket [-h] [-v] [-u U] [-H H] [-p P] {bk,dp,mk,ls,rm,st} ...
 
 mysqlrocket commands are:
@@ -148,3 +150,7 @@ Check your mysqlrocket config file and MySQL server connectivity
 
 
 
+
+.. |flattr| image:: http://api.flattr.com/button/flattr-badge-large.png
+ :alt: Flattr this git repo
+.. _flattr: https://flattr.com/submit/auto?user_id=cypx&url=https://github.com/cypx/mysqlrocket&title=mysqlrocket&language=&tags=github&category=software
