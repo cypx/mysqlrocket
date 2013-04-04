@@ -139,15 +139,15 @@ class MySQLRocket(object):
 			print "Database creation fail"
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-		print "-"*50		
-		print "| {0:46} |".format("Database was successfully created!")
-		print "-"*50
-		print "| {0:46} |".format("Host: "+self.host)
-		print "| {0:46} |".format("Database name: "+db_name)
-		print "| {0:46} |".format("User name: "+db_user)
-		print "| {0:46} |".format("User password: "+db_password)
-		print "| {0:46} |".format("DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name)
-		print "-"*50
+		print "-"*80		
+		print "| {0:76} |".format("Database was successfully created!")
+		print "-"*80
+		print "| {0:76} |".format("Host: "+self.host)
+		print "| {0:76} |".format("Database name: "+db_name)
+		print "| {0:76} |".format("User name: "+db_user)
+		print "| {0:76} |".format("User password: "+db_password)
+		print "| {0:76} |".format("DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name)
+		print "-"*80
 
 	def ls(self, db_pattern='%', db_extend=False):
 		db_list=self.showdb(db_pattern)
