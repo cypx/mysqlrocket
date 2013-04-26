@@ -1,10 +1,17 @@
 **************
-MYSQLROCKET 
+MYSQLROCKET
 **************
 
 
-Changelog 
+Changelog
 #############
+
+0.1.0 (20130426)
+*******************
+
+* Fix first config loading on first launch
+* Add .sql extension to dump filename
+* Beta release
 
 0.0.17 (20130211)
 *******************
@@ -15,7 +22,7 @@ Changelog
 *******************
 
 * List command do not show extended information by default (too slow)
-* List command has a new argument (-a) for showing extended information 
+* List command has a new argument (-a) for showing extended information
 * Code and output improvements
 
 0.0.15 (20130124)

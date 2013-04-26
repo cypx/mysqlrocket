@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
- 
+
 from setuptools import setup, find_packages
- 
+
 execfile('mysqlrocket/ressources.py')
- 
+
 setup(
     name=__app_name__,
     version=__version__,
@@ -25,7 +25,7 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Topic :: Database",
         "Topic :: Utilities",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
     ],
     entry_points = {
         'console_scripts': [
@@ -33,5 +33,5 @@ setup(
         ],
     },
     license=__license__,
- 
-) 
+
+)

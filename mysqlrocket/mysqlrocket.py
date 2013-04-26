@@ -91,20 +91,28 @@ class MySQLRocket(object):
 				self.config.add_section(config_id)
 				self.config.set(config_id, 'name', self.name)
 				if input_host:
-					self.config.set(config_id, 'host', input_host) 
+					self.config.set(config_id, 'host', input_host)
+					self.host=input_host
 				else:
 					self.config.set(config_id, 'host', self.host)
 				if input_port:
 					self.config.set(config_id, 'port', int(input_port))
+					self.port=input_port
 				else:
 					self.config.set(config_id, 'port', self.port)
 				if input_user:
 					self.config.set(config_id, 'user', input_user)
+					self.user=input_user
 				else:
 					self.config.set(config_id, 'user', self.user)
-				self.config.set(config_id, 'password', input_password)
+				if input_password:
+					self.config.set(config_id, 'password', input_password)
+					self.password=input_password
+				else:
+					self.config.set(config_id, 'password', self.password)
 				if input_mysqldump:
 					self.config.set(config_id, 'mysqldump', input_mysqldump)
+					self.mysqldump=input_mysqldump
 				else:
 					self.config.set(config_id, 'mysqldump', self.mysqldump)
 				if not os.path.exists(os.path.dirname(self.config_file)):
@@ -135,11 +143,11 @@ class MySQLRocket(object):
 			cursor.execute('FLUSH PRIVILEGES;')
 			cursor.close()
 			conn.close()
-		except mysql.Error, e:	
+		except mysql.Error, e:
 			print "Database creation fail"
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-		print "-"*80		
+		print "-"*80
 		print "| {0:76} |".format("Database was successfully created!")
 		print "-"*80
 		print "| {0:76} |".format("Host: "+self.host)
@@ -206,13 +214,13 @@ class MySQLRocket(object):
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
-		print "-"*50		
+		print "-"*50
 		print "| {0:46} |".format("Database was successfully deleted!")
 		print "-"*50
 
 	def dp(self, db_name):
 		datenow= datetime.datetime.now()
-		filename = db_name + "-" +datenow.strftime("%Y_%m_%d-%H_%M_%S") + ".gz"
+		filename = db_name + "-" +datenow.strftime("%Y_%m_%d-%H_%M_%S") + ".sql" + ".gz"
 		try:
 			if self.password == "":
 				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -236,7 +244,7 @@ class MySQLRocket(object):
 			print 'MySQL connection was successful!'
 			if st_extended:
 				cursor.execute('SHOW STATUS;')
-				print "-"*50		
+				print "-"*50
 				print "| {0:46} |".format("MySQL Server Status")
 				print "-"*50
 				for status in cursor.fetchall():
@@ -266,7 +274,7 @@ class MySQLRocket(object):
 			db.size=str(result[0])
 			cursor.close()
 			conn.close()
-		except mysql.Error, e:	
+		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
 		return db
@@ -305,7 +313,7 @@ def launcher():
 	parser_st = subparsers.add_parser('st',description='Check your mysqlrocket config file and MySQL server status', help='Check your mysqlrocket config file and MySQL server status')
 	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
 
-	args = parser.parse_args() 
+	args = parser.parse_args()
 
 	if args.mysql_user is not None: session.user = args.mysql_user
 
@@ -315,16 +323,16 @@ def launcher():
 
 	if args.mysql_port is not None: session.port = args.mysql_port
 
-	if hasattr(args,'mk_db_name'): 
+	if hasattr(args,'mk_db_name'):
 	    session.mk(args.mk_db_name,args.mk_db_pass)
 
 	if hasattr(args,'ls_db_pattern'):
 	    session.ls('%'+args.ls_db_pattern+'%',args.ls_db_extend)
 
-	if hasattr(args,'rm_db_name'): 
+	if hasattr(args,'rm_db_name'):
 	    session.rm(args.rm_db_name)
 
-	if hasattr(args,'dp_db_name'): 
+	if hasattr(args,'dp_db_name'):
 	    session.dp(args.dp_db_name)
 
 	if hasattr(args,'bk_db_pattern'):
