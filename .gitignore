@@ -9,3 +9,5 @@ include/
 lib/
 lib64
 
+# Sublime Text
+*.sublime-workspace
