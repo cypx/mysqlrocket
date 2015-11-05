@@ -53,6 +53,7 @@ class MySQLRocket(object):
 		self.port = 3306
 		self.password = ""
 		self.mysqldump = "/usr/bin/mysqldump"
+		self.excluded = "information_schema performance_schema"
 		self.config = ConfigParser.ConfigParser()
 		self.config_file= os.path.join(user_data_dir(self.appname, self.appauthor), 'mysqlrocket.cfg')
 		self.config.read(self.config_file)
@@ -73,6 +74,7 @@ class MySQLRocket(object):
 				self.user=self.config.get(config_id, 'user', 0)
 				self.password=self.config.get(config_id, 'password', 0)
 				self.mysqldump=self.config.get(config_id, 'mysqldump', 0)
+				self.excluded=self.config.get(config_id, 'excluded', 0)
 			except ConfigParser.NoOptionError:
 				print 'Invalid or outdated config'
 				remove_config=query_yes_no("Do you want to remove invalid config")
@@ -115,6 +117,7 @@ class MySQLRocket(object):
 					self.mysqldump=input_mysqldump
 				else:
 					self.config.set(config_id, 'mysqldump', self.mysqldump)
+				self.config.set(config_id, 'excluded', self.excluded)
 				if not os.path.exists(os.path.dirname(self.config_file)):
 					os.makedirs(os.path.dirname(self.config_file))
 				with open(self.config_file, 'wb') as configfile:
@@ -150,11 +153,11 @@ class MySQLRocket(object):
 		print "-"*80
 		print "| {0:76} |".format("Database was successfully created!")
 		print "-"*80
-		print "| {0:76} |".format("Host: "+self.host)
-		print "| {0:76} |".format("Database name: "+db_name)
-		print "| {0:76} |".format("User name: "+db_user)
-		print "| {0:76} |".format("User password: "+db_password)
-		print "| {0:76} |".format("DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name)
+		print "* {0}".format("Host: "+self.host)
+		print "* {0}".format("Database: "+db_name)
+		print "* {0}".format("User: "+db_user)
+		print "* {0}".format("Password: "+db_password)
+		print "* {0}".format("DSN: mysql://"+db_user+":"+db_password+"@"+self.host+"/"+db_name)
 		print "-"*80
 
 	def ls(self, db_pattern='%', db_extend=False):
@@ -337,8 +340,10 @@ def launcher():
 
 	if hasattr(args,'bk_db_pattern'):
 		db_list=session.showdb(args.bk_db_pattern)
+		db_excluded=session.excluded.split()
 		for database in db_list:
-	 		session.dp(database)
+			if database not in db_excluded:
+				session.dp(database)
 
 	if hasattr(args,'st_extended'):
 		if args.st_extended=="full":

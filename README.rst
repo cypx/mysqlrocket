@@ -1,5 +1,5 @@
 ***********************************************
-MYSQLROCKET  - Simple & fast MySQL manage tool 
+MYSQLROCKET  - Simple & fast MySQL manage tool
 ***********************************************
 
 **MysqlRocket** is a Simple CLI tool to create and delete easily MySQL databases.
@@ -27,9 +27,9 @@ Optional arguments:
 
 See 'mysqlrocket <command> -h' for more information on a specific command.
 
-PyPI package `<http://pypi.python.org/pypi/mysqlrocket>`__ 
+PyPI package `<http://pypi.python.org/pypi/mysqlrocket>`__
 
-Sources `<https://github.com/cypx/mysqlrocket>`__ 
+Sources `<https://github.com/cypx/mysqlrocket>`__
 
 Installation
 ##############
@@ -46,19 +46,28 @@ Using pip
 Using easy_install
 *********************
 
-On most Linux distribution 
+On most Linux distribution
 
 .. code-block:: bash
 
 	$ easy_install mysqlrocket
 
-But on some, prerequisites are required, for example, on Debian 6
+But on some, prerequisites are required, for example, on Debian (6 to 8)
 
 .. code-block:: bash
 
-	$ aptitude install python-pip python2.6-mysqldb
+	$ aptitude install python-pip python-mysqldb
 
 (mysqldb could not be installed by easy_install cause of some system dependencies)
+
+Manual install
+*********************
+
+.. code-block:: bash
+
+	$ git clone https://github.com/cypx/mysqlrocket
+	$ cd mysqlrocket
+	$ python setup.py install
 
 Upgrade
 ##########
