@@ -15,6 +15,7 @@ mysqlrocket commands are:
 * **mk**        Create a MySQL database with an dedicated user and a random password
 * **ls**        Show databases on MySQL server
 * **rm**        Delete a MySQL database
+* **fs**        Flush a MySQL database
 * **st**     	Check your mysqlrocket config and MySQL server connectivity
 
 Optional arguments:

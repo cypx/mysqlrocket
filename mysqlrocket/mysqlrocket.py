@@ -240,6 +240,30 @@ class MySQLRocket(object):
 		except subprocess.CalledProcessError as e:
 			print "Error: process exited with status %s" % e.returncode
 
+	def fs(self, db_name):
+		print 'Database "{database_name}" will be flushed, and all its content deleted'.format(database_name=db_name)
+		areyousure=query_yes_no('Are you sure?','no')
+		if areyousure is False:
+			print 'Operation aborted'
+			exit()
+		protected_db=['information_schema', 'mysql', 'information_schema']
+		if any(db_name == db for db in protected_db):
+			print '"'+db_name+'" is a protected database, you should not delete it'
+			exit()
+		try:
+			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
+			cursor = conn.cursor()
+			cursor.execute('DROP DATABASE {database_name};'.format(database_name=db_name))
+			cursor.execute('CREATE DATABASE {database_name};'.format(database_name=db_name))
+			cursor.close()
+			conn.close()
+		except mysql.Error, e:
+			print('Error %d: %s' % (e.args[0], e.args[1]))
+			sys.exit(1)
+		print "-"*50
+		print "| {0:46} |".format("Database was successfully flushed!")
+		print "-"*50
+
 	def st(self, st_extended=False):
 		try:
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
@@ -315,6 +339,8 @@ def launcher():
 	parser_bk.add_argument('bk_db_pattern', metavar='<backup_pattern>', type=str, nargs='?', default='%', help='Dump only databases name matching pattern')
 	parser_bk.add_argument('-d', '--force-destination',dest='bk_dest', metavar='<backup_destination>', type=str, default='', help='Backup to a specific destination')
 
+	parser_fs = subparsers.add_parser('fs',description='Flush a MySQL database', help='Flush a MySQL database')
+	parser_fs.add_argument('fs_db_name', metavar='<fs_name>', type=str, help='Name of the flushed database')
 
 	parser_st = subparsers.add_parser('st',description='Check your mysqlrocket config file and MySQL server status', help='Check your mysqlrocket config file and MySQL server status')
 	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
@@ -347,6 +373,9 @@ def launcher():
 		for database in db_list:
 			if database not in db_excluded:
 				session.dp(database,args.bk_dest)
+
+	if hasattr(args,'fs_db_name'):
+	    session.fs(args.fs_db_name)
 
 	if hasattr(args,'st_extended'):
 		if args.st_extended=="full":
