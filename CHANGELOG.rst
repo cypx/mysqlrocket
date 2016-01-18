@@ -6,6 +6,11 @@ MYSQLROCKET
 Changelog
 #############
 
+0.2.0 (2016????)
+*******************
+* Some modification to prevent warning message on recent Linux distribution
+* Add flush, load and copy option
+
 0.1.0 (20130426)
 *******************
 

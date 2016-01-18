@@ -52,6 +52,7 @@ class MySQLRocket(object):
 		self.user = "root"
 		self.port = 3306
 		self.password = ""
+		self.mysql = "/usr/bin/mysql"
 		self.mysqldump = "/usr/bin/mysqldump"
 		self.excluded = "information_schema performance_schema"
 		self.config = ConfigParser.ConfigParser()
@@ -73,6 +74,7 @@ class MySQLRocket(object):
 				self.port=int(self.config.get(config_id, 'port', 0))
 				self.user=self.config.get(config_id, 'user', 0)
 				self.password=self.config.get(config_id, 'password', 0)
+				self.mysql=self.config.get(config_id, 'mysql', 0)
 				self.mysqldump=self.config.get(config_id, 'mysqldump', 0)
 				self.excluded=self.config.get(config_id, 'excluded', 0)
 			except ConfigParser.NoOptionError:
@@ -87,6 +89,7 @@ class MySQLRocket(object):
 			input_port = raw_input("port ("+str(self.port)+")> ")
 			input_user = raw_input("user ("+self.user+")> ")
 			input_password = raw_input("pass > ")
+			input_mysql = raw_input("mysql absolute path ("+self.mysql+")> ")
 			input_mysqldump = raw_input("mysqldump absolute path ("+self.mysqldump+")> ")
 			save_config=query_yes_no("Do you want to save configuration?")
 			if (save_config):
@@ -112,6 +115,11 @@ class MySQLRocket(object):
 					self.password=input_password
 				else:
 					self.config.set(config_id, 'password', self.password)
+				if input_mysql:
+					self.config.set(config_id, 'mysql', input_mysql)
+					self.mysql=input_mysql
+				else:
+					self.config.set(config_id, 'mysql', self.mysql)
 				if input_mysqldump:
 					self.config.set(config_id, 'mysqldump', input_mysqldump)
 					self.mysqldump=input_mysqldump
@@ -228,7 +236,7 @@ class MySQLRocket(object):
 			if self.password == "":
 				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			else:
-				p1 = subprocess.Popen("mysqldump -u %s -p%s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.password, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+				p1 = subprocess.Popen(self.mysqldump+" -u %s -p%s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.password, self.host, db_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 			p2 = subprocess.Popen("gzip -c > %s" % (filename), stdin=p1.stdout, shell=True)
 			p1.stdout.close()
 			output = p1.stderr.read()
@@ -264,6 +272,38 @@ class MySQLRocket(object):
 		print "| {0:46} |".format("Database was successfully flushed!")
 		print "-"*50
 
+	def cp(self, db_src, db_dest):
+        # TODO add test to verify if dbs exist
+		self.fs(db_dest)
+		try:
+			if self.password == "":
+				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.host, db_src), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+				p2 = subprocess.Popen(self.mysql+" -u %s -h %s %s" % (self.user, self.host, db_dest), stdin=p1.stdout, shell=True)
+			else:
+				p1 = subprocess.Popen(self.mysqldump+" -u %s -p%s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.password, self.host, db_src), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+				p2 = subprocess.Popen(self.mysql+" -u %s -p%s -h %s %s" % (self.user, self.password, self.host, db_dest), stdin=p1.stdout, shell=True)
+			p1.stdout.close()
+			output = p1.stderr.read()
+			if output == '':
+				print "The database "+db_src+" has been duplicate to: "+db_dest
+			else:
+				print output
+				exit(1)
+		except subprocess.CalledProcessError as e:
+			print "Error: process exited with status %s" % e.returncode
+
+	def ld(self, db_name, fl_name):
+        # TODO add test to verify if db and file exist
+		self.fs(db_name)
+		try:
+			if self.password == "":
+				p1 = subprocess.Popen(self.mysql+" -u %s -h %s %s" % (self.user, self.host, db_name), stdin=file(fl_name), shell=True)
+			else:
+				p1 = subprocess.Popen(self.mysql+" -u %s -p%s -h %s %s" % (self.user, self.password, self.host, db_name), stdin=file(fl_name), shell=True)
+			print fl_name+" has been imported to: "+db_name
+		except subprocess.CalledProcessError as e:
+			print "Error: process exited with status %s" % e.returncode
+
 	def st(self, st_extended=False):
 		try:
 			conn = mysql.connect(host=self.host, port=self.port, user=self.user, passwd=self.password)
@@ -279,7 +319,6 @@ class MySQLRocket(object):
 				print "-"*50
 			cursor.close()
 			conn.close()
-
 		except mysql.Error, e:
 			print('Error %d: %s' % (e.args[0], e.args[1]))
 			sys.exit(1)
@@ -340,7 +379,15 @@ def launcher():
 	parser_bk.add_argument('-d', '--force-destination',dest='bk_dest', metavar='<backup_destination>', type=str, default='', help='Backup to a specific destination')
 
 	parser_fs = subparsers.add_parser('fs',description='Flush a MySQL database', help='Flush a MySQL database')
-	parser_fs.add_argument('fs_db_name', metavar='<fs_name>', type=str, help='Name of the flushed database')
+	parser_fs.add_argument('fs_db_name', metavar='<db_name>', type=str, help='Name of the flushed database')
+
+	parser_cp = subparsers.add_parser('cp',description='Duplicate a MySQL database', help='Duplicate a MySQL database')
+	parser_cp.add_argument('cp_db_src', metavar='<db_src>', type=str, help='Source database')
+	parser_cp.add_argument('cp_db_dest', metavar='<db_dest>', type=str, help='Destination database')
+
+	parser_ld = subparsers.add_parser('ld',description='Load a MySQL database from a file', help='Load a MySQL database from a file')
+	parser_ld.add_argument('ld_db_name', metavar='<db_name>', type=str, help='Name of the database')
+	parser_ld.add_argument('ld_fl_name', metavar='<fl_name>', type=str, help='File to import')
 
 	parser_st = subparsers.add_parser('st',description='Check your mysqlrocket config file and MySQL server status', help='Check your mysqlrocket config file and MySQL server status')
 	parser_st.add_argument('st_extended', metavar='<status>', type=str, nargs='?', default='basic', help='Choose between "basic" or "full" status')
@@ -376,6 +423,12 @@ def launcher():
 
 	if hasattr(args,'fs_db_name'):
 	    session.fs(args.fs_db_name)
+
+	if hasattr(args,'cp_db_src'):
+	    session.cp(args.cp_db_src,args.cp_db_dest)
+
+	if hasattr(args,'ld_db_name'):
+	    session.ld(args.ld_db_name,args.ld_fl_name)
 
 	if hasattr(args,'st_extended'):
 		if args.st_extended=="full":
