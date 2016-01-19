@@ -139,6 +139,7 @@ class MySQLRocket(object):
 					self.config.write(configfile)
 					print '\nConfiguration file has been saved to: '+os.path.abspath(self.config_file)
 					print 'WARNING: password has been stored in plain text \n'
+				os.chmod(self.config_file, 0640)
 
 	def mk(self, db_name, db_password):
 		if self.db_exist(db_name):
