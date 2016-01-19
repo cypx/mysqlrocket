@@ -17,8 +17,8 @@ mysqlrocket commands are:
 * **rm**        Delete a MySQL database
 * **fs**        Flush a MySQL database
 * **cp**        Copy a MySQL database to another
-* **ls**        Import a dump into a database
-* **st**     	Check your mysqlrocket config and MySQL server connectivity
+* **ld**        Import a dump into a database
+* **st**        Check your mysqlrocket config and MySQL server connectivity
 
 Optional arguments:
 
@@ -158,6 +158,16 @@ Copy a database to another (flush destination database if its exist, create if n
 .. code-block:: bash
 
 	$ mysqlrocket cp SOURCE_DATABASE_NAME DESTINATION_DATABASE_NAME
+
+Load dump file to database
+*******************************
+
+Load dump file to database (flush destination database if its exist, create if not)
+
+.. code-block:: bash
+
+	$ mysqlrocket ld SOURCE_DATABASE_NAME FILE_PATH
+
 
 Flush a database
 *************************
