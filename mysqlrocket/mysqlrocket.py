@@ -67,6 +67,13 @@ class MySQLRocket(object):
 					self.config.write(configfile)
 					print '\nConfiguration file has been update: '+os.path.abspath(self.config_file)
 
+	def db_exist(self, db_name):
+		db_list=self.showdb('%')
+		for database in db_list:
+			if database==db_name:
+				return True
+		return False
+
 	def load(self, config_id):
 		if (self.config.has_section(config_id)):
 			try:
@@ -134,11 +141,9 @@ class MySQLRocket(object):
 					print 'WARNING: password has been stored in plain text \n'
 
 	def mk(self, db_name, db_password):
-		db_list=self.showdb('%')
-		for database in db_list:
-			if database==db_name:
-				print 'Error database already exist!'
-				sys.exit(1)
+		if self.db_exist(db_name):
+			print 'Error database already exist!'
+			sys.exit(1)
 		db_user=db_name
 		if len(db_user)>16:
 			print 'ERROR user name (same as datatabase name) cannot exceed 16 characters (MySQL restriction)'
@@ -206,6 +211,9 @@ class MySQLRocket(object):
 		return db_list
 
 	def rm(self, db_name):
+		if not self.db_exist(db_name):
+				print 'Database "{database_name}" do not exist, operation aborted!'.format(database_name=db_name)
+				exit()
 		print 'Database "{database_name}" will be deleted'.format(database_name=db_name)
 		areyousure=query_yes_no('Are you sure?','no')
 		if areyousure is False:
@@ -273,8 +281,15 @@ class MySQLRocket(object):
 		print "-"*50
 
 	def cp(self, db_src, db_dest):
-        # TODO add test to verify if dbs exist
-		self.fs(db_dest)
+		if not self.db_exist(db_dest):
+				print 'Database "{database_name}" do not exist, do you want to create it?'.format(database_name=db_dest)
+				areyousure=query_yes_no('Are you sure?','no')
+				if areyousure is False:
+					print 'Operation aborted'
+					exit()
+				self.mk(db_dest,"")
+		else:
+			self.fs(db_dest)
 		try:
 			if self.password == "":
 				p1 = subprocess.Popen(self.mysqldump+" -u %s -h %s -e --opt --single-transaction --max_allowed_packet=512M -c %s" % (self.user, self.host, db_src), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -293,8 +308,18 @@ class MySQLRocket(object):
 			print "Error: process exited with status %s" % e.returncode
 
 	def ld(self, db_name, fl_name):
-        # TODO add test to verify if db and file exist
-		self.fs(db_name)
+		if not os.path.exists(fl_name):
+			print 'File "{file_name}" do not exist, operation aborted!'.format(file_name=fl_name)
+			exit()
+		if not self.db_exist(db_name):
+				print 'Database "{database_name}" do not exist, do you want to create it?'.format(database_name=db_name)
+				areyousure=query_yes_no('Are you sure?','no')
+				if areyousure is False:
+					print 'Operation aborted'
+					exit()
+				self.mk(db_name,"")
+		else:
+			self.fs(db_name)
 		try:
 			if self.password == "":
 				p1 = subprocess.Popen(self.mysql+" -u %s -h %s %s" % (self.user, self.host, db_name), stdin=file(fl_name), shell=True)
