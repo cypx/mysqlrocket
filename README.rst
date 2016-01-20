@@ -80,7 +80,7 @@ Using pip
 
 .. code-block:: bash
 
-	$ pip --upgrade mysqlrocket
+	$ pip install mysqlrocket --upgrade
 
 Using easy_install
 *********************
@@ -89,19 +89,29 @@ Using easy_install
 
 	$ easy_install --upgrade mysqlrocket
 
+Uninstall
+##########
+
+Using pip
+**************
+
+.. code-block:: bash
+
+	$ pip uninstall mysqlrocket
+
 Examples
 ##########
 
 Create a new database
 *************************
 
-Create a new database whith an associated user account using the same name and a random password
+Create a new database with an associated user account using the same name and a random password
 
 .. code-block:: bash
 
 	$ mysqlrocket mk DATABASE_NAME
 
-Create a new database whith an associated user account using the same name and force password
+Create a new database with an associated user account using the same name and force password
 
 .. code-block:: bash
 
@@ -110,7 +120,7 @@ Create a new database whith an associated user account using the same name and f
 Backup databases
 *************************
 
-Dump all databases avalaible on your server to the current directory
+Dump all databases available on your server to the current directory
 
 .. code-block:: bash
 
@@ -129,13 +139,13 @@ Dump a databases to the current directory
 Show all databases
 *************************
 
-Show all databases avalaible on your server
+Show all databases available on your server
 
 .. code-block:: bash
 
 	$ mysqlrocket ls
 
-Show all databases avalaible on your server and some information (tables number, size...)
+Show all databases available on your server and some information (tables number, size...)
 
 .. code-block:: bash
 
@@ -190,6 +200,6 @@ Check your mysqlrocket config file and MySQL server connectivity
 
 
 
-.. |flattr| image:: http://api.flattr.com/button/flattr-badge-large.png
+.. |flattr| image:: https://api.flattr.com/button/flattr-badge-large.png
  :alt: Flattr this git repo
 .. _flattr: https://flattr.com/submit/auto?user_id=cypx&url=https://github.com/cypx/mysqlrocket&title=mysqlrocket&language=&tags=github&category=software
