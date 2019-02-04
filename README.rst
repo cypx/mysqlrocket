@@ -4,8 +4,6 @@ MYSQLROCKET  - Simple & fast MySQL manage tool
 
 **MysqlRocket** is a Simple CLI tool to create and delete easily MySQL databases.
 
-|flattr|_
-
 usage: mysqlrocket [-h] [-v] [-u U] [-H H] [-p P] {bk,dp,mk,ls,rm,st} ...
 
 mysqlrocket commands are:
@@ -30,7 +28,7 @@ Optional arguments:
 
 See 'mysqlrocket <command> -h' for more information on a specific command.
 
-PyPI package `<http://pypi.python.org/pypi/mysqlrocket>`__
+PyPI package `<https://pypi.org/project/mysqlrocket/>`__
 
 Sources `<https://github.com/cypx/mysqlrocket>`__
 
@@ -59,7 +57,7 @@ But on some, prerequisites are required, for example, on Debian (6 to 8)
 
 .. code-block:: bash
 
-	$ aptitude install python-pip python-mysqldb
+	$ apt-get install python-pip python-mysqldb libmysqlclient-dev
 
 (mysqldb could not be installed by easy_install cause of some system dependencies)
 
@@ -196,10 +194,3 @@ Check your mysqlrocket config file and MySQL server connectivity
 .. code-block:: bash
 
 	$ mysqlrocket st
-
-
-
-
-.. |flattr| image:: https://api.flattr.com/button/flattr-badge-large.png
- :alt: Flattr this git repo
-.. _flattr: https://flattr.com/submit/auto?user_id=cypx&url=https://github.com/cypx/mysqlrocket&title=mysqlrocket&language=&tags=github&category=software
