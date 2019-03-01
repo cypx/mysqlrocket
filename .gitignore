@@ -11,3 +11,6 @@ lib64
 
 # Sublime Text
 *.sublime-workspace
+
+# VS Code
+.vscode
