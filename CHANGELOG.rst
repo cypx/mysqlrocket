@@ -6,7 +6,7 @@ MYSQLROCKET
 Changelog
 #############
 
-0.3.0 (201902??)
+0.3.0 (20190304)
 *******************
 * Python 3 support
 * Black formatting (https://github.com/ambv/black)
