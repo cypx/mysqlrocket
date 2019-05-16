@@ -4,7 +4,7 @@
 from __future__ import print_function
 import ressources
 import sys
-import ConfigParser
+import configparser
 import string
 import random
 import datetime
@@ -56,7 +56,7 @@ class MySQLRocket(object):
         self.mysql = "/usr/bin/mysql"
         self.mysqldump = "/usr/bin/mysqldump"
         self.excluded = "information_schema performance_schema"
-        self.config = ConfigParser.ConfigParser()
+        self.config = configparser.ConfigParser()
         self.config_file = os.path.join(
             user_data_dir(self.appname, self.appauthor), "mysqlrocket.cfg"
         )
@@ -90,7 +90,7 @@ class MySQLRocket(object):
                 self.mysql = self.config.get(config_id, "mysql", 0)
                 self.mysqldump = self.config.get(config_id, "mysqldump", 0)
                 self.excluded = self.config.get(config_id, "excluded", 0)
-            except ConfigParser.NoOptionError:
+            except configparser.NoOptionError:
                 print("Invalid or outdated config")
                 remove_config = query_yes_no("Do you want to remove invalid config")
                 if remove_config:
