@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import ressources
+from builtins import input
+from mysqlrocket import ressources
 import sys
 import configparser
 import string
@@ -12,7 +13,6 @@ import subprocess
 from appdirs import *
 from argparse import ArgumentParser
 import MySQLdb as mysql
-
 
 def query_yes_no(question, default="yes"):
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
@@ -26,7 +26,7 @@ def query_yes_no(question, default="yes"):
         raise ValueError("invalid default answer: '%s'" % default)
     while 1:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == "":
             return valid[default]
         elif choice in valid.keys():
@@ -102,12 +102,12 @@ class MySQLRocket(object):
                     50, "+"
                 )
             )
-            input_host = raw_input("host (" + self.host + ")> ")
-            input_port = raw_input("port (" + str(self.port) + ")> ")
-            input_user = raw_input("user (" + self.user + ")> ")
-            input_password = raw_input("pass > ")
-            input_mysql = raw_input("mysql absolute path (" + self.mysql + ")> ")
-            input_mysqldump = raw_input(
+            input_host = input("host (" + self.host + ")> ")
+            input_port = input("port (" + str(self.port) + ")> ")
+            input_user = input("user (" + self.user + ")> ")
+            input_password = input("pass > ")
+            input_mysql = input("mysql absolute path (" + self.mysql + ")> ")
+            input_mysqldump = input(
                 "mysqldump absolute path (" + self.mysqldump + ")> "
             )
             save_config = query_yes_no("Do you want to save configuration?")

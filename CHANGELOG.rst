@@ -6,6 +6,10 @@ MYSQLROCKET
 Changelog
 #############
 
+0.3.1 (20190516)
+*******************
+* fix Python 3.7 support 
+
 0.3.0 (20190304)
 *******************
 * Python 3 support
