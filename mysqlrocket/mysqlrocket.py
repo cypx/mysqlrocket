@@ -83,13 +83,13 @@ class MySQLRocket(object):
     def load(self, config_id):
         if self.config.has_section(config_id):
             try:
-                self.host = self.config.get(config_id, "host", 0)
-                self.port = int(self.config.get(config_id, "port", 0))
-                self.user = self.config.get(config_id, "user", 0)
-                self.password = self.config.get(config_id, "password", 0)
-                self.mysql = self.config.get(config_id, "mysql", 0)
-                self.mysqldump = self.config.get(config_id, "mysqldump", 0)
-                self.excluded = self.config.get(config_id, "excluded", 0)
+                self.host = self.config.get(config_id, "host")
+                self.port = int(self.config.get(config_id, "port"))
+                self.user = self.config.get(config_id, "user")
+                self.password = self.config.get(config_id, "password")
+                self.mysql = self.config.get(config_id, "mysql")
+                self.mysqldump = self.config.get(config_id, "mysqldump")
+                self.excluded = self.config.get(config_id, "excluded")
             except configparser.NoOptionError:
                 print("Invalid or outdated config")
                 remove_config = query_yes_no("Do you want to remove invalid config")
