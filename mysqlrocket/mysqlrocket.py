@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+from __future__ import absolute_import
 from builtins import input
 from mysqlrocket import ressources
 import sys
@@ -13,6 +14,7 @@ import subprocess
 from appdirs import *
 from argparse import ArgumentParser
 import MySQLdb as mysql
+
 
 def query_yes_no(question, default="yes"):
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
@@ -51,7 +53,7 @@ class MySQLRocket(object):
         self.name = "default"
         self.host = "localhost"
         self.user = "root"
-        self.port = 3306
+        self.port = "3306"
         self.password = ""
         self.mysql = "/usr/bin/mysql"
         self.mysqldump = "/usr/bin/mysqldump"
@@ -66,7 +68,7 @@ class MySQLRocket(object):
         remove_config = query_yes_no("Are you sure you want to remove config?")
         if remove_config:
             self.config.remove_section(config_id)
-            with open(self.config_file, "wb") as configfile:
+            with open(self.config_file, "w") as configfile:
                 self.config.write(configfile)
                 print(
                     "\nConfiguration file has been update: "
@@ -120,7 +122,7 @@ class MySQLRocket(object):
                 else:
                     self.config.set(config_id, "host", self.host)
                 if input_port:
-                    self.config.set(config_id, "port", int(input_port))
+                    self.config.set(config_id, "port", input_port)
                     self.port = input_port
                 else:
                     self.config.set(config_id, "port", self.port)
@@ -147,7 +149,7 @@ class MySQLRocket(object):
                 self.config.set(config_id, "excluded", self.excluded)
                 if not os.path.exists(os.path.dirname(self.config_file)):
                     os.makedirs(os.path.dirname(self.config_file))
-                with open(self.config_file, "wb") as configfile:
+                with open(self.config_file, "w") as configfile:
                     self.config.write(configfile)
                     print(
                         "\nConfiguration file has been saved to: "
@@ -173,7 +175,10 @@ class MySQLRocket(object):
             db_password = "".join([random.choice(dictionnary) for i in range(8)])
         try:
             conn = mysql.connect(
-                host=self.host, port=self.port, user=self.user, passwd=self.password
+                host=self.host,
+                port=int(self.port),
+                user=self.user,
+                passwd=self.password,
             )
             cursor = conn.cursor()
             cursor.execute(
@@ -252,7 +257,10 @@ class MySQLRocket(object):
         db_list = []
         try:
             conn = mysql.connect(
-                host=self.host, port=self.port, user=self.user, passwd=self.password
+                host=self.host,
+                port=int(self.port),
+                user=self.user,
+                passwd=self.password,
             )
             cursor = conn.cursor()
             cursor.execute(
@@ -288,7 +296,10 @@ class MySQLRocket(object):
             exit()
         try:
             conn = mysql.connect(
-                host=self.host, port=self.port, user=self.user, passwd=self.password
+                host=self.host,
+                port=int(self.port),
+                user=self.user,
+                passwd=self.password,
             )
             cursor = conn.cursor()
             cursor.execute(
@@ -364,7 +375,10 @@ class MySQLRocket(object):
             exit()
         try:
             conn = mysql.connect(
-                host=self.host, port=self.port, user=self.user, passwd=self.password
+                host=self.host,
+                port=int(self.port),
+                user=self.user,
+                passwd=self.password,
             )
             cursor = conn.cursor()
             cursor.execute(
@@ -462,7 +476,7 @@ class MySQLRocket(object):
             if self.password == "":
                 p1 = subprocess.Popen(
                     self.mysql + " -u %s -h %s %s" % (self.user, self.host, db_name),
-                    stdin=file(fl_name),
+                    stdin=open(fl_name, "r"),
                     shell=True,
                 )
             else:
@@ -470,7 +484,7 @@ class MySQLRocket(object):
                     self.mysql
                     + " -u %s -p%s -h %s %s"
                     % (self.user, self.password, self.host, db_name),
-                    stdin=file(fl_name),
+                    stdin=open(fl_name, "r"),
                     shell=True,
                 )
             print(fl_name + " has been imported to: " + db_name)
@@ -480,7 +494,10 @@ class MySQLRocket(object):
     def st(self, st_extended=False):
         try:
             conn = mysql.connect(
-                host=self.host, port=self.port, user=self.user, passwd=self.password
+                host=self.host,
+                port=int(self.port),
+                user=self.user,
+                passwd=self.password,
             )
             cursor = conn.cursor()
             print("MySQL connection was successful!")
@@ -503,7 +520,10 @@ class MySQLRocket(object):
         db.name = db_name
         try:
             conn = mysql.connect(
-                host=self.host, port=self.port, user=self.user, passwd=self.password
+                host=self.host,
+                port=int(self.port),
+                user=self.user,
+                passwd=self.password,
             )
             cursor = conn.cursor()
             cursor.execute(
