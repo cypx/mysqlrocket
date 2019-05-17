@@ -44,6 +44,12 @@ Using pip
 
 	$ pip install mysqlrocket
 
+Warning! On some old distribution using Python 2.x, you could require to upgrade pip to support install, run:
+
+.. code-block:: bash
+
+	$ pip install --index-url=https://pypi.python.org/simple/ --upgrade pip setuptools
+
 Using easy_install
 *********************
 
